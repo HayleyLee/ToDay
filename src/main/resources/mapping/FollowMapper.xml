@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ToDay.dao.FollowMapper">
+    <resultMap id="followResultMap" type="Follow">
+        <result property="id" column="id" />
+        <result property="me_id" column="me_id" />
+        <result property="follow_id" column="follow_id" />
+        <result property="create_time" column="create_time" />
+    </resultMap>
+
+    <select id="selectMe" resultMap="followResultMap" parameterType="map">
+        select *
+        from td_follow
+        where 1=1
+        <if test="me_id!='' and me_id!=null">
+            and me_id=#{me_id}
+        </if>
+        <if test="follow_id!='' and follow_id!=null">
+            and follow_id=#{follow_id}
+        </if>
+    </select>
+
+    <insert id="create">
+        INSERT INTO
+        td_follow(me_id,follow_id,create_time)
+        VALUES (#{me_id,jdbcType=NUMERIC},
+                #{follow_id,jdbcType=NUMERIC},
+                #{create_time,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM td_follow
+        WHERE
+        id = #{id,jdbcType=NUMERIC}
+    </delete>
+</mapper>

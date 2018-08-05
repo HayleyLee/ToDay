@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ToDay.dao.UserMapper">
+
+    <resultMap id="userResultMap" type="User" >
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="banner" column="banner"/>
+        <result property="photo" column="photo"/>
+        <result property="autograph1" column="autograph1"/>
+        <result property="autograph2" column="autograph2"/>
+        <result property="autograph3" column="autograph3"/>
+        <result property="create_time" column="create_time"/>
+    </resultMap>
+
+    <select id="serach" resultMap="userResultMap">
+        SELECT *
+        FROM td_user
+        WHERE
+        name LIKE binary CONCAT('%',#{seed},'%')
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+
+    <select id="findByConditions" resultMap="userResultMap" parameterType="map">
+        select *
+        from td_user
+        where 1=1
+        <if test="id!='' and id!=null">
+            and id=#{id}
+        </if>
+        <if test="name!='' and name!=null">
+            and name=#{name}
+        </if>
+        <if test="email!='' and email!=null">
+            and email=#{email}
+        </if>
+        <if test="phone!='' and phone!=null">
+            and phone=#{phone}
+        </if>
+        <if test="create_time!='' and create_time!=null">
+            and create_time like CONCAT('%',#{create_time},'%')
+        </if>
+    </select>
+
+    <select id="select" parameterType="java.lang.String" resultMap="userResultMap">
+        SELECT *
+        FROM td_user
+        ORDER BY ${condition}
+        ASC
+    </select>
+
+    <update id="update">
+        UPDATE td_user
+        SET
+        name=#{name,jdbcType=VARCHAR},
+        password=#{password,jdbcType=VARCHAR},
+        email=#{email,jdbcType=VARCHAR},
+        phone=#{phone,jdbcType=BIGINT},
+        banner=#{banner,jdbcType=VARCHAR},
+        photo=#{photo,jdbcType=VARCHAR},
+        autograph1=#{autograph1,jdbcType=VARCHAR},
+        autograph2=#{autograph2,jdbcType=VARCHAR},
+        autograph3=#{autograph3,jdbcType=VARCHAR}
+        WHERE
+        id=#{id,jdbcType=NUMERIC}
+    </update>
+
+    <select id="login" resultMap="userResultMap">
+        SELECT *
+        FROM td_user
+        WHERE
+        name=#{name,jdbcType=VARCHAR}
+        OR
+        phone=#{phone,jdbcType=BIGINT}
+        AND
+        password=#{password,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="create">
+        INSERT INTO
+        td_user(name,password,email,phone,create_time)
+        VALUES (#{name,jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR},
+                #{email,jdbcType=VARCHAR},
+                #{phone,jdbcType=BIGINT},
+                #{create_time,jdbcType=TIMESTAMP})
+    </insert>
+</mapper>

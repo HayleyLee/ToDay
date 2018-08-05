@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ToDay.dao.ArticleMapper">
+
+    <resultMap id="articleResultMap" type="Article" >
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="article" column="article"/>
+        <result property="photo" column="photo"/>
+        <result property="video" column="video"/>
+        <result property="user_id" column="user_id"/>
+        <result property="like_count" column="like_count"/>
+        <result property="create_time" column="create_time"/>
+    </resultMap>
+
+    <select id="serach" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        WHERE name LIKE binary CONCAT('%',#{seed},'%')
+        OR article LIKE binary CONCAT('%',#{seed},'%')
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+
+    <select id="findByConditions" resultMap="articleResultMap" parameterType="map">
+        select *
+        from td_article
+        where 1=1
+        <if test="id!='' and id!=null">
+            and id=#{id}
+        </if>
+        <if test="name!='' and name!=null">
+            and name=#{name}
+        </if>
+        <if test="user_id!='' and user_id!=null">
+            and user_id=#{user_id}
+        </if>
+        <if test="create_time!='' and create_time!=null">
+            and create_time like CONCAT('%',#{create_time},'%')
+        </if>
+    </select>
+
+    <select id="select" parameterType="java.lang.String" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        ORDER BY ${condition}
+        ASC
+    </select>
+
+    <update id="update">
+        UPDATE td_article
+        SET
+        like_count=#{like_count,jdbcType=NUMERIC}
+        WHERE
+        id=#{id,jdbcType=NUMERIC}
+    </update>
+
+    <insert id="create">
+        INSERT INTO
+        td_article(name,article,photo,video,user_id,like_count,create_time)
+        VALUES (#{name,jdbcType=VARCHAR},
+                #{article,jdbcType=VARCHAR},
+                #{photo,jdbcType=VARCHAR},
+                #{video,jdbcType=VARCHAR},
+                #{user_id,jdbcType=NUMERIC},
+                #{like_count,jdbcType=NUMERIC},
+                #{create_time,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM td_article
+        WHERE
+        id = #{id,jdbcType=NUMERIC}
+    </delete>
+    
+    <select id="aboutMe" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        WHERE user_id=${uid}
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+
+    <select id="indexShow" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        ORDER BY id DESC
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+    
+    <select id="descIt" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        ORDER BY id DESC
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+
+    <select id="top" resultMap="articleResultMap">
+        SELECT *
+        FROM td_article
+        ORDER BY like_count DESC
+        <if test="pn!=null and ps!=null">
+            LIMIT ${pn},${ps}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-4.2.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <!-- 全注解方式 -->
+    <!-- 配置扫描Controller的包 -->
+    <context:component-scan base-package="com.ToDay"/>
+
+    <!-- 启用MVC注解 -->
+    <mvc:annotation-driven/>
+
+    <!-- 静态资源不拦截 -->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- 文件上传配置 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 最大上传500M的文件 -->
+        <property name="maxUploadSize" value="530000000" />
+        <property name="maxInMemorySize" value="4096"/>
+        <property name="defaultEncoding" value="utf-8" />
+        <property name="resolveLazily" value="true"/><!-- 延迟解析（把上传异常交给Controller处理） -->
+    </bean>
+    <!-- 登录拦截器配置-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/article/saveArticle"/>
+            <mvc:mapping path="/article/sendArticle"/>
+            <mvc:mapping path="/article/aboutMe"/>
+            <mvc:mapping path="/article/normal"/>
+            <mvc:mapping path="/article/big"/>
+            <mvc:mapping path="/comment/create_comment"/>
+            <mvc:mapping path="/user/updateAutograph"/>
+            <mvc:mapping path="/user/uploadPhoto"/>
+            <mvc:mapping path="/user/uploadBanner"/>
+            <mvc:mapping path="/about.jsp"/>
+            <mvc:mapping path="/createArticle.jsp"/>
+            <mvc:mapping path="/createBigArticle.jsp"/>
+            <mvc:mapping path="/followlist.jsp"/>
+            <mvc:mapping path="/whofollow.jsp"/>
+            <!-- 排除拦截的url -->
+            <mvc:exclude-mapping path="/index.jsp"/>
+            <mvc:exclude-mapping path="/comment.jsp"/>
+            <mvc:exclude-mapping path="/follow/**"/>
+            <mvc:exclude-mapping path="/serach/**"/>
+            <bean class="com.ToDay.safety.LoginStatusHandler" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+</beans>

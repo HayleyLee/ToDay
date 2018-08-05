@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ToDay.dao.CommentMapper">
+
+    <resultMap id="commentResultMap" type="Comment" >
+        <result property="id" column="id"/>
+        <result property="article_id" column="article_id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="comment" column="comment"/>
+        <result property="create_time" column="create_time"/>
+    </resultMap>
+
+    <select id="serach" resultMap="commentResultMap">
+        SELECT *
+        FROM td_comment
+        WHERE id=#{seed}
+        OR name=#{seed}
+        OR create_time like binary CONCAT('%',#{seed},'%');
+    </select>
+
+    <select id="findByConditions" resultMap="commentResultMap" parameterType="map">
+        select *
+        from td_comment
+        where 1=1
+        <if test="id!='' and id!=null">
+            and id=#{id};
+        </if>
+        <if test="article_id!='' and article_id!=null">
+            and article_id=#{article_id};
+        </if>
+        <if test="user_id!='' and user_id!=null">
+            and user_id=#{user_id};
+        </if>
+        <if test="create_time!='' and create_time!=null">
+            and create_time like CONCAT('%',#{create_time},'%')
+        </if>
+    </select>
+
+    <select id="selectByArticle" resultMap="commentResultMap">
+        SELECT *
+        FROM td_comment
+        WHERE article_id=${aid}
+        <if test="pn!=null and ps!=null">
+          LIMIT ${pn},${ps}
+        </if>
+    </select>
+
+    <insert id="create">
+        INSERT INTO
+        td_comment(article_id,user_id,comment,create_time)
+        VALUES (#{article_id,jdbcType=NUMERIC},
+                #{user_id,jdbcType=NUMERIC},
+                #{comment,jdbcType=VARCHAR},
+                #{create_time,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM td_comment
+        WHERE
+        id = #{id,jdbcType=NUMERIC}
+    </delete>
+    
+</mapper>
